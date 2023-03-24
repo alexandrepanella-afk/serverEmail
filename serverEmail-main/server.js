@@ -1,6 +1,6 @@
-const express = require('express');
 const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
+const express = require('express');
 
 const app = express();
 
@@ -17,14 +17,18 @@ app.get('/receive', (req, res) => {
 app.listen(3000, () => {
   console.log('Servidor rodando na porta 3000');
 });
+
 const transporter = nodemailer.createTransport({
-  host: 'imap.gmail.com',
-  port: 993,
+  host: 'smtps.uhserver.com',
+  port: 465,
   secure: true,
   auth: {
-    user: 'seu-email@gmail.com',
-    pass: 'sua-senha'
-  }
+    user: 'alexandre.panella@vazoli.com.br',
+    pass: 'Vazoli@alexandre'
+  },
+  tls: {
+    rejectUnauthorized: false,
+  },
 });
 
 transporter.once('connected', () => {
@@ -48,12 +52,12 @@ transporter.once('connected', () => {
 });
 
 const mailOptions = {
-  from: 'seu-email@gmail.com',
-  to: 'email-do-destinatario@gmail.com',
+  from: 'alexandre.panella@vazoli.com.br',
+  to:  'alexandre.panella@vazoli.com.br',
   subject: 'Assunto do e-mail',
-  text: 'Mensagem do e-mail'
+  html: '<h1>Welcome</h1><p>That was easy!</p>'
+  
 };
-
 transporter.sendMail(mailOptions, (error, info) => {
   if (error) {
     console.log(error);
@@ -61,4 +65,3 @@ transporter.sendMail(mailOptions, (error, info) => {
     console.log('E-mail enviado: ' + info.response);
   }
 });
-
