@@ -1,23 +1,34 @@
-const nodemailer = require('nodemailer');
-const bodyParser = require('body-parser');
-const express = require('express');
+const express = require("express");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const nodemailer = require("nodemailer");
+
+const details = require("./details.json");
 
 const app = express();
-
-app.use(bodyParser.urlencoded({ extended: true }));
-
-app.post('/send', (req, res) => {
-  // código para enviar o e-mail
-});
-
-app.get('/receive', (req, res) => {
-  // código para receber o e-mail
-});
+app.use(cors({origin: "*" }));
+app.use(bodyParser.json());
 
 app.listen(3000, () => {
-  console.log('Servidor rodando na porta 3000');
+  console.log("The server started on port 3000");
 });
 
+app.get("/receive", (req, res) => {
+  res.send(
+    "<h1 style='text-align: center'>Wellcome to FunOfHeuristic <br><br>😃👻😃👻😃👻😃👻😃</h1>"
+  );
+});
+
+app.post("/sendmail", (req, res) => {
+  console.log("request came");
+  let user = req.body;
+  sendMail(user, info => {
+    console.log(`The mail has beed send 😃 and the id is ${info.messageId}`);
+    res.send(info);
+  });
+});
+
+const  sendMail = async (user, callback) =>{
 const transporter = nodemailer.createTransport({
   host: 'smtps.uhserver.com',
   port: 465,
@@ -31,37 +42,14 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-transporter.once('connected', () => {
-  console.log('Conectado ao servidor IMAP');
-  transporter.openBox('INBOX', (error, box) => {
-    if (error) throw error;
-    console.log(`Caixa de entrada aberta: ${box.messages.total} mensagens`);
-    transporter.search(['UNSEEN'], (error, result) => {
-      if (error) throw error;
-      console.log(`Mensagens não lidas: ${result.length}`);
-      result.forEach(uid => {
-        const fetchOptions = {
-          bodies: ['HEADER', 'TEXT'],
-          markSeen: true
-        };
-        const messageStream = transporter.createMessageStream(uid, fetchOptions);
-        messageStream.pipe(process.stdout);
-      });
-    });
-  });
-});
-
 const mailOptions = {
   from: 'alexandre.panella@vazoli.com.br',
-  to:  'alexandre.panella@vazoli.com.br',
+  to:  user.email,
   subject: 'Assunto do e-mail',
-  html: '<h1>Welcome</h1><p>That was easy!</p>'
-  
+  html: `<h1>${user.text}</h1> <h1>${user.name}</h1><br>`
 };
-transporter.sendMail(mailOptions, (error, info) => {
-  if (error) {
-    console.log(error);
-  } else {
-    console.log('E-mail enviado: ' + info.response);
-  }
-});
+
+let info = await transporter.sendMail(mailOptions);
+
+callback(info)
+}
