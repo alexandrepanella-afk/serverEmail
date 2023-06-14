@@ -15,7 +15,7 @@ app.listen(3000, () => {
 
 app.get("/receive", (req, res) => {
   res.send(
-    "<h1 style='text-align: center'>Wellcome to FunOfHeuristic <br><br>😃👻😃👻😃👻😃👻😃</h1>"
+    "<h1 style='text-align: center'>Wellcome<br><br>😃👻😃👻😃👻😃👻😃</h1>"
   );
 });
 
@@ -34,8 +34,8 @@ const transporter = nodemailer.createTransport({
   port: 465,
   secure: true,
   auth: {
-    user: 'alexandre.panella@vazoli.com.br',
-    pass: 'Vazoli@alexandre'
+    user: 'Your email',
+    pass: 'Your pass'
   },
   tls: {
     rejectUnauthorized: false,
@@ -43,9 +43,9 @@ const transporter = nodemailer.createTransport({
 });
 
 const mailOptions = {
-  from: 'alexandre.panella@vazoli.com.br',
+  from: 'Your email',
   to:  user.email,
-  subject: 'Assunto do e-mail',
+  subject: 'Assunto e-mail',
   html: `<h1>${user.text}</h1> <h1>${user.name}</h1><br>`
 };
 
